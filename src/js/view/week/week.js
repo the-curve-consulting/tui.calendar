@@ -97,6 +97,7 @@ Week.prototype.render = function() {
         narrowWeekend = options.narrowWeekend,
         startDayOfWeek = options.startDayOfWeek,
         workweek = options.workweek,
+        sameDayEachWeek = options.sameDayEachWeek,
         theme = this.controller.theme || {},
         state = this.state;
     var renderStartDate, renderEndDate, schedulesInDateRange, viewModel, grids, range;
@@ -107,7 +108,7 @@ Week.prototype.render = function() {
     range = datetime.range(
         datetime.start(renderStartDate),
         datetime.end(renderEndDate),
-        datetime.MILLISECONDS_PER_DAY
+        sameDayEachWeek ? (datetime.MILLISECONDS_PER_DAY * 7) : datetime.MILLISECONDS_PER_DAY
     );
 
     if (options.workweek && datetime.compare(renderStartDate, renderEndDate)) {
@@ -119,9 +120,8 @@ Week.prototype.render = function() {
         renderEndDate = range[range.length - 1];
     }
 
-    schedulesInDateRange = this.controller.findByDateRange(
-        datetime.start(renderStartDate),
-        datetime.end(renderEndDate),
+    schedulesInDateRange = this.controller.findByRange(
+        range,
         this.panels,
         scheduleFilter,
         this.options

@@ -208,7 +208,7 @@ datetime = {
         while (cursor <= endTime && endTime >= date.d.getTime()) {
             result.push(datetime.start(date.d));
             cursor = cursor + step;
-            date.addDate(1);
+            date.addDate(step / datetime.MILLISECONDS_PER_DAY);
         }
 
         return result;
@@ -486,7 +486,8 @@ datetime = {
             startDayOfWeek = options.startDayOfWeek,
             isAlways6Week = util.isUndefined(options.isAlways6Week) || options.isAlways6Week,
             visibleWeeksCount = options.visibleWeeksCount,
-            workweek = options.workweek;
+            workweek = options.workweek,
+            sameDayEachWeek = options.sameDayEachWeek;
 
         if (visibleWeeksCount) {
             start = new TZDate(month);
@@ -512,7 +513,17 @@ datetime = {
         } else {
             totalDate = isAlways6Week ? (7 * 6) : (startIndex + end.getDate() + afterDates);
         }
-        cursor = datetime.start(start).addDate(-startIndex);
+        if (sameDayEachWeek) {
+            if (start.getDay() === startDayOfWeek) {
+                cursor = datetime.start(start);
+                totalDate = end.getDate();
+            } else {
+                cursor = datetime.start(start).addDate(7 - startIndex);
+                totalDate = end.getDate() - (7 - startIndex);
+            }
+        } else {
+            cursor = datetime.start(start).addDate(-startIndex);
+        }
         // iteratee all dates to render
         util.forEachArray(util.range(totalDate), function(i) {
             var date;

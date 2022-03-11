@@ -1151,6 +1151,7 @@ Calendar.prototype.move = function(offset) {
         startDayOfWeek,
         visibleWeeksCount,
         workweek,
+        sameDayEachWeek,
         isAlways6Week,
         datetimeOptions;
 
@@ -1194,17 +1195,32 @@ Calendar.prototype.move = function(offset) {
         startDate = tempDate[0][0];
         endDate = tempDate[tempDate.length - 1][tempDate[tempDate.length - 1].length - 1];
     } else if (viewName === 'week') {
-        renderDate.addDate(offset * 7);
         startDayOfWeek = util.pick(this._options, 'week', 'startDayOfWeek') || 0;
         workweek = util.pick(this._options, 'week', 'workweek') || false;
-        tempDate = this._getWeekDayRange(renderDate.d, startDayOfWeek, workweek);
+        sameDayEachWeek = util.pick(this._options, 'week', 'sameDayEachWeek') || false;
+        if (sameDayEachWeek) {
+            datetimeOptions = {
+                startDayOfWeek: startDayOfWeek,
+                workweek: workweek,
+                sameDayEachWeek: sameDayEachWeek
+            };
 
-        startDate = tempDate[0];
-        endDate = tempDate[1];
+            renderDate.addMonth(offset);
+            tempDate = datetime.arr2dCalendar(renderDate.d, datetimeOptions);
+            startDate = tempDate[0][0];
+            endDate = tempDate[tempDate.length - 1][tempDate[tempDate.length - 1].length - 1];
+        } else {
+            renderDate.addDate(offset * 7);
+            startDayOfWeek = util.pick(this._options, 'week', 'startDayOfWeek') || 0;
+            workweek = util.pick(this._options, 'week', 'workweek') || false;
+            tempDate = this._getWeekDayRange(renderDate.d, startDayOfWeek, workweek);
 
+            startDate = tempDate[0];
+            endDate = tempDate[1];
+        }
         recursiveSet(view, function(childView, opt) {
-            opt.renderStartDate = new TZDate(startDate);
-            opt.renderEndDate = new TZDate(endDate);
+            opt.renderStartDate = startDate;
+            opt.renderEndDate = endDate;
 
             childView.setState({
                 collapsed: true

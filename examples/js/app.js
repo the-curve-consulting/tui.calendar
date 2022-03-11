@@ -168,6 +168,16 @@
 
                 target.querySelector('input').checked = !options.month.workweek;
                 break;
+            case 'toggle-sameDayEachWeek':
+                options.month.sameDayEachWeek = !options.month.sameDayEachWeek;
+                options.week.sameDayEachWeek = !options.week.sameDayEachWeek;
+                viewName = cal.getViewName();
+                options.month.selectedDay = 2;
+                options.week.startDayOfWeek = 3;
+                options.taskView = false;
+                options.scheduleView = ['time'];
+                target.querySelector('input').checked = options.month.sameDayEachWeek;
+                break;
             default:
                 break;
         }

@@ -429,6 +429,29 @@ Base.prototype.splitScheduleByDateRange = function(start, end, scheduleCollectio
     return result;
 };
 
+Base.prototype.splitScheduleByRange = function(range, scheduleCollection) {
+    var ownMatrix = this.dateMatrix,
+        result = {};
+
+    util.forEachArray(range, function(date) {
+        var ymd = datetime.format(date, 'YYYYMMDD'),
+            matrix = ownMatrix[ymd],
+            collection;
+
+        collection = result[ymd] = common.createScheduleCollection();
+
+        if (matrix && matrix.length) {
+            util.forEachArray(matrix, function(id) {
+                scheduleCollection.doWhenHas(id, function(schedule) {
+                    collection.add(schedule);
+                });
+            });
+        }
+    });
+
+    return result;
+};
+
 /**
  * Return schedules in supplied date range.
  *

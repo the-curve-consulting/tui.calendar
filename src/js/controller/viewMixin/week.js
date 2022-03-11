@@ -169,7 +169,26 @@ var Week = {
             result = {};
 
         var _getViewModel = Week._makeGetViewModelFuncForTimeView(hourStart, hourEnd);
+        util.forEach(ymdSplitted, function(collection, ymd) {
+            var viewModels = _getViewModel(collection);
+            var collisionGroups, matrices;
 
+            collisionGroups = self.Core.getCollisionGroup(viewModels);
+            matrices = self.Core.getMatrices(collection, collisionGroups);
+            self.Week.getCollides(matrices);
+
+            result[ymd] = matrices;
+        });
+
+        return result;
+    },
+
+    getViewModelSameDayView: function(range, time, hourStart, hourEnd) {
+        var self = this,
+            ymdSplitted = this.splitScheduleByRange(range, time),
+            result = {};
+
+        var _getViewModel = Week._makeGetViewModelFuncForTimeView(hourStart, hourEnd);
         util.forEach(ymdSplitted, function(collection, ymd) {
             var viewModels = _getViewModel(collection);
             var collisionGroups, matrices;
@@ -319,6 +338,37 @@ var Week = {
                 group[name] = ctrlWeek.getViewModelForAlldayView(start, end, group[name]);
             } else if (panel.type === 'timegrid') {
                 group[name] = ctrlWeek.getViewModelForTimeView(start, end, group[name], hourStart, hourEnd);
+            }
+        });
+
+        return group;
+    },
+
+    findByRange: function(range, panels, andFilters, options) {
+        var ctrlCore = this.Core,
+            ctrlWeek = this.Week,
+            start = range[0],
+            end = range[range.length - 1],
+            filter = ctrlCore.getScheduleInDateRangeFilter(start, end),
+            scheduleTypes = util.pluck(panels, 'name'),
+            hourStart = util.pick(options, 'hourStart'),
+            hourEnd = util.pick(options, 'hourEnd'),
+            modelColl,
+            group;
+
+        andFilters = andFilters || [];
+        filter = Collection.and.apply(null, [filter].concat(andFilters));
+
+        modelColl = this.schedules.find(filter);
+        modelColl = ctrlCore.convertToViewModel(modelColl);
+
+        group = modelColl.groupBy(scheduleTypes, this.groupFunc);
+        util.forEach(panels, function(panel) {
+            var name = panel.name;
+            if (panel.type === 'daygrid') {
+                group[name] = ctrlWeek.getViewModelForAlldayView(start, end, group[name]);
+            } else if (panel.type === 'timegrid') {
+                group[name] = ctrlWeek.getViewModelSameDayView(range, group[name], hourStart, hourEnd);
             }
         });
 

@@ -216,6 +216,7 @@ export interface IWeekOptions {
     daynames?: string[];
     narrowWeekend?: boolean;
     workweek?: boolean;
+    sameDayEachWeek?: boolean;
     showTimezoneCollapseButton?: boolean;
     timezonesCollapsed?: boolean;
     hourStart?: number;
@@ -229,6 +230,7 @@ export interface IMonthOptions {
     visibleWeeksCount?: number;
     isAlways6Week?: boolean;
     workweek?: boolean;
+    sameDayEachWeek?: boolean;
     visibleScheduleCount?: number;
     moreLayerSize?: {
         width?: string | null;
