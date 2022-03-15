@@ -347,8 +347,8 @@ var Week = {
     findByRange: function(range, panels, andFilters, options) {
         var ctrlCore = this.Core,
             ctrlWeek = this.Week,
-            start = range[0],
-            end = range[range.length - 1],
+            start = datetime.start(range[0]),
+            end = datetime.end(range[range.length - 1]),
             filter = ctrlCore.getScheduleInDateRangeFilter(start, end),
             scheduleTypes = util.pluck(panels, 'name'),
             hourStart = util.pick(options, 'hourStart'),

@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.15.3 | Fri Mar 11 2022
+ * @version 1.15.3 | Tue Mar 15 2022
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -10304,8 +10304,8 @@ var Week = {
     findByRange: function(range, panels, andFilters, options) {
         var ctrlCore = this.Core,
             ctrlWeek = this.Week,
-            start = range[0],
-            end = range[range.length - 1],
+            start = datetime.start(range[0]),
+            end = datetime.end(range[range.length - 1]),
             filter = ctrlCore.getScheduleInDateRangeFilter(start, end),
             scheduleTypes = util.pluck(panels, 'name'),
             hourStart = util.pick(options, 'hourStart'),
