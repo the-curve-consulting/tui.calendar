@@ -183,7 +183,7 @@ TimeCreationGuide.prototype._getStyleDataFunc = function(viewHeight, hourLength,
      * @returns {number[]} top, time
      */
     function getStyleData(scheduleData) {
-        var minMinutes = 30;
+        var minMinutes = 60;
         var gridY = scheduleData.nearestGridY,
             gridTimeY = scheduleData.nearestGridTimeY,
             gridEndTimeY = scheduleData.nearestGridEndTimeY || new TZDate(gridTimeY).addMinutes(minMinutes),

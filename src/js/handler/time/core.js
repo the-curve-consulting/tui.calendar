@@ -27,9 +27,9 @@ var timeCore = {
         // and convert milliseconds value to hours.
         var result = datetime.millisecondsTo('hour', (y * baseMil) / height),
             floored = result | 0,
-            nearest = common.nearest(result - floored, [0, 1]);
+            nearest = common.nearest(result - floored, [0]);
 
-        return floored + (nearest ? 0.5 : 0);
+        return floored + (nearest);
     },
 
     /**
@@ -45,7 +45,6 @@ var timeCore = {
             viewTime = timeView.getDate(),
             hourLength = options.hourEnd - options.hourStart,
             baseMil = datetime.millisecondsFrom('hour', hourLength);
-
         /**
          * @param {MouseEvent} mouseEvent - mouse event object to get common event data.
          * @param {object} [extend] - object to extend event data before return.
