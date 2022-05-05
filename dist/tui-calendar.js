@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.15.3 | Thu May 05 2022
+ * @version 1.15.3 | Fri May 06 2022
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -12431,6 +12431,7 @@ var config = __webpack_require__(/*! ../config */ "./src/js/config.js"),
     MonthCreation = __webpack_require__(/*! ../handler/month/creation */ "./src/js/handler/month/creation.js"),
     MonthResize = __webpack_require__(/*! ../handler/month/resize */ "./src/js/handler/month/resize.js"),
     MonthMove = __webpack_require__(/*! ../handler/month/move */ "./src/js/handler/month/move.js"),
+    MonthRightClick = __webpack_require__(/*! ../handler/month/rightclick */ "./src/js/handler/month/rightclick.js"),
     More = __webpack_require__(/*! ../view/month/more */ "./src/js/view/month/more.js"),
     ScheduleCreationPopup = __webpack_require__(/*! ../view/popup/scheduleCreationPopup */ "./src/js/view/popup/scheduleCreationPopup.js"),
     ScheduleDetailPopup = __webpack_require__(/*! ../view/popup/scheduleDetailPopup */ "./src/js/view/popup/scheduleDetailPopup.js"),
@@ -12467,7 +12468,8 @@ function getViewModelForMoreLayer(date, target, schedules, daynames) {
  */
 function createMonthView(baseController, layoutContainer, dragHandler, options) {
     var monthViewContainer, monthView, moreView, createView;
-    var clickHandler, creationHandler, resizeHandler, moveHandler, clearSchedulesHandler, onUpdateSchedule;
+    var clickHandler, creationHandler, resizeHandler, moveHandler, clearSchedulesHandler, onUpdateSchedule,
+        rightClickHandler;
     var onShowCreationPopup, onSaveNewSchedule, onShowEditPopup;
     var detailView, onShowDetailPopup, onDeleteSchedule, onEditSchedule;
 
@@ -12483,6 +12485,7 @@ function createMonthView(baseController, layoutContainer, dragHandler, options) 
         creationHandler = new MonthCreation(dragHandler, monthView, baseController, options);
         resizeHandler = new MonthResize(dragHandler, monthView, baseController);
         moveHandler = new MonthMove(dragHandler, monthView, baseController);
+        rightClickHandler = new MonthRightClick(dragHandler, monthView, baseController);
     }
 
     clearSchedulesHandler = function() {
@@ -12609,6 +12612,9 @@ function createMonthView(baseController, layoutContainer, dragHandler, options) 
             },
             move: {
                 'default': moveHandler
+            },
+            rightclick: {
+                'default': rightClickHandler
             }
         });
     }
@@ -12864,7 +12870,6 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
         var name = panel.name;
         var handlers = panel.handlers;
         var view;
-        console.log('panel name', name);
 
         if (!panel.show) {
             return;
@@ -17403,6 +17408,109 @@ MonthResizeGuide.prototype._onDragEnd = function() {
 module.exports = MonthResizeGuide;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
+
+/***/ }),
+
+/***/ "./src/js/handler/month/rightclick.js":
+/*!********************************************!*\
+  !*** ./src/js/handler/month/rightclick.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Click handler for month view
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+var util = __webpack_require__(/*! tui-code-snippet */ "tui-code-snippet");
+var config = __webpack_require__(/*! ../../config */ "./src/js/config.js"),
+    datetime = __webpack_require__(/*! ../../common/datetime */ "./src/js/common/datetime.js"),
+    domutil = __webpack_require__(/*! ../../common/domutil */ "./src/js/common/domutil.js");
+
+/**
+ * @constructor
+ * @implements {Handler}
+ * @mixes util.CustomEvents
+ * @param {Drag} [dragHandler] - Drag handler instance.
+ * @param {Month} [monthView] - Month view instance.
+ * @param {Base} [baseController] - Base controller instance.
+ */
+function MonthClick(dragHandler, monthView, baseController) {
+    /**
+     * @type {Drag}
+     */
+    this.dragHandler = dragHandler;
+
+    /**
+     * @type {Month}
+     */
+    this.monthView = monthView;
+
+    /**
+     * @type {Base}
+     */
+    this.baseController = baseController;
+
+    dragHandler.on({
+        'rightclick': this._onClick
+    }, this);
+}
+
+/**
+ * Destructor
+ */
+MonthClick.prototype.destroy = function() {
+    this.dragHandler.off(this);
+    this.monthView = this.baseController = this.dragHandler = null;
+};
+
+/**
+ * @fires MonthClick#clickMore
+ * @param {object} clickEvent - click event object
+ */
+MonthClick.prototype._onClick = function(clickEvent) {
+    var self = this,
+        moreElement,
+        scheduleCollection = this.baseController.schedules,
+        blockElement = domutil.closest(clickEvent.target, config.classname('.weekday-schedule-block'))
+                    || domutil.closest(clickEvent.target, config.classname('.month-more-schedule'));
+
+    moreElement = domutil.closest(
+        clickEvent.target,
+        config.classname('.weekday-exceed-in-month')
+    );
+
+    if (moreElement) {
+        self.fire('clickMore', {
+            date: datetime.parse(domutil.getData(moreElement, 'ymd')),
+            target: moreElement,
+            ymd: domutil.getData(moreElement, 'ymd')
+        });
+    }
+
+    if (blockElement) {
+        scheduleCollection.doWhenHas(domutil.getData(blockElement, 'id'), function(schedule) {
+            /**
+             * @events AlldayClick#clickSchedule
+             * @type {object}
+             * @property {Schedule} schedule - schedule instance
+             * @property {MouseEvent} event - MouseEvent object
+             */
+            self.fire('rightClickSchedule', {
+                schedule: schedule,
+                event: clickEvent.originEvent
+            });
+        });
+    }
+};
+
+util.CustomEvents.mixin(MonthClick);
+
+module.exports = MonthClick;
+
 
 /***/ }),
 
