@@ -37,12 +37,6 @@
         'clickSchedule': function(e) {
             console.log('clickSchedule', e);
         },
-        'rightClickSchedule': function(e) {
-            console.log('rightClickSchedule', e);
-            $(e.event.target).bind("contextmenu", function(e) {
-                e.preventDefault();
-            });
-        },
         'clickDayname': function(date) {
             console.log('clickDayname', date);
         },

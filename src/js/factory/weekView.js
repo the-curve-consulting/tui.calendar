@@ -28,7 +28,6 @@ var DayGridCreation = require('../handler/daygrid/creation');
 var DayGridMove = require('../handler/daygrid/move');
 var DayGridResize = require('../handler/daygrid/resize');
 var TimeClick = require('../handler/time/click');
-var TimeRightClick = require('../handler/time/rightclick');
 var TimeCreation = require('../handler/time/creation');
 var TimeMove = require('../handler/time/move');
 var TimeResize = require('../handler/time/resize');
@@ -43,8 +42,7 @@ var TIMEGRID_HANDLERS = {
     'click': TimeClick,
     'creation': TimeCreation,
     'move': TimeMove,
-    'resize': TimeResize,
-    'rightclick': TimeRightClick
+    'resize': TimeResize
 };
 var DEFAULT_PANELS = [
     {
@@ -81,7 +79,7 @@ var DEFAULT_PANELS = [
         name: 'time',
         type: 'timegrid',
         autoHeight: true,
-        handlers: ['click', 'creation', 'move', 'resize', 'rightclick'],
+        handlers: ['click', 'creation', 'move', 'resize'],
         show: true
     }
 ];
@@ -147,8 +145,7 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
         dayname: {},
         creation: {},
         move: {},
-        resize: {},
-        rightclick: {}
+        resize: {}
     };
 
     dayNameContainer = domutil.appendHTMLElement('div', weekView.container, config.classname('dayname-layout'));
@@ -177,7 +174,6 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
         var name = panel.name;
         var handlers = panel.handlers;
         var view;
-        console.log('panel name', name);
 
         if (!panel.show) {
             return;

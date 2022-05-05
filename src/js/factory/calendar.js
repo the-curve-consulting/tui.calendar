@@ -1416,10 +1416,6 @@ Calendar.prototype._onClick = function(clickScheduleData) {
     this.fire('clickSchedule', clickScheduleData);
 };
 
-Calendar.prototype._onRightClick = function(clickScheduleData) {
-    this.fire('rightClickSchedule', clickScheduleData);
-};
-
 /**
  * A bridge-based event handler for connecting a click handler to a user click event handler for each view
  * @fires Calendar#clickMore
@@ -1608,10 +1604,6 @@ Calendar.prototype._toggleViewSchedule = function(isAttach, view) {
 
     util.forEach(handler.click, function(clickHandler) {
         clickHandler[method]('clickSchedule', self._onClick, self);
-    });
-
-    util.forEach(handler.rightclick, function(clickHandler) {
-        clickHandler[method]('rightClickSchedule', self._onRightClick, self);
     });
 
     util.forEach(handler.dayname, function(clickHandler) {
