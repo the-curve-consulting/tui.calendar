@@ -177,7 +177,6 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
         var name = panel.name;
         var handlers = panel.handlers;
         var view;
-        console.log('panel name', name);
 
         if (!panel.show) {
             return;
