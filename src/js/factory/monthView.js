@@ -15,6 +15,7 @@ var config = require('../config'),
     MonthCreation = require('../handler/month/creation'),
     MonthResize = require('../handler/month/resize'),
     MonthMove = require('../handler/month/move'),
+    MonthRightClick = require('../handler/month/rightclick'),
     More = require('../view/month/more'),
     ScheduleCreationPopup = require('../view/popup/scheduleCreationPopup'),
     ScheduleDetailPopup = require('../view/popup/scheduleDetailPopup'),
@@ -51,7 +52,8 @@ function getViewModelForMoreLayer(date, target, schedules, daynames) {
  */
 function createMonthView(baseController, layoutContainer, dragHandler, options) {
     var monthViewContainer, monthView, moreView, createView;
-    var clickHandler, creationHandler, resizeHandler, moveHandler, clearSchedulesHandler, onUpdateSchedule;
+    var clickHandler, creationHandler, resizeHandler, moveHandler, clearSchedulesHandler, onUpdateSchedule,
+        rightClickHandler;
     var onShowCreationPopup, onSaveNewSchedule, onShowEditPopup;
     var detailView, onShowDetailPopup, onDeleteSchedule, onEditSchedule;
 
@@ -67,6 +69,7 @@ function createMonthView(baseController, layoutContainer, dragHandler, options) 
         creationHandler = new MonthCreation(dragHandler, monthView, baseController, options);
         resizeHandler = new MonthResize(dragHandler, monthView, baseController);
         moveHandler = new MonthMove(dragHandler, monthView, baseController);
+        rightClickHandler = new MonthRightClick(dragHandler, monthView, baseController);
     }
 
     clearSchedulesHandler = function() {
@@ -193,6 +196,9 @@ function createMonthView(baseController, layoutContainer, dragHandler, options) 
             },
             move: {
                 'default': moveHandler
+            },
+            rightclick: {
+                'default': rightClickHandler
             }
         });
     }

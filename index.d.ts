@@ -114,6 +114,7 @@ export interface IEvents {
     'clickDayname'?: (eventObj: IEventDateObject) => void;
     'clickMore'?: (eventObj: IEventMoreObject) => void;
     'clickSchedule'?: (eventObj: IEventScheduleObject) => void;
+    'rightClickSchedule'?: (eventObj: IEventScheduleObject) => void;
     'clickTimezonesCollapseBtn'?: (timezonesCollapsed: boolean) => void;
 }
 
