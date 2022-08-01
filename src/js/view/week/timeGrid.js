@@ -500,11 +500,13 @@ TimeGrid.prototype.render = function(viewModel) {
      * Render hourmarker
      **********/
     this.hourmarkers = domutil.find(config.classname('.timegrid-hourmarker'), container, true);
-
     if (!this._scrolled) {
         this._scrolled = true;
         this.scrollToNow();
     }
+
+    this.timeGridHours = domutil.find('.tui-full-calendar-timegrid-hour', container, true);
+    this.scrollToHour(10);
 };
 
 TimeGrid.prototype.renderStickyContainer = function(baseViewModel) {
@@ -594,6 +596,41 @@ TimeGrid.prototype.attachEvent = function() {
     );
 
     domevent.on(this.stickyContainer, 'click', this._onClickStickyContainer, this);
+};
+
+TimeGrid.prototype.scrollToHour = function(hour) {
+    var timeSuffix = hour >= 12 ? 'pm' : 'am';
+    var hourString = ((hour % 12) || 12) + ' ' + timeSuffix;
+    var container = this.container;
+    var offsetTop, viewBound, scrollTop, scrollAmount, scrollBy, scrollFn;
+
+    var matchedHour = null;
+    util.forEach(this.timeGridHours, function(timeElement) {
+        if (timeElement.textContent.toLowerCase().trim() === hourString.toLowerCase()) {
+            matchedHour = timeElement;
+        }
+    });
+
+    if (!matchedHour) {
+        return;
+    }
+    offsetTop = matchedHour.offsetTop;
+    viewBound = this.getViewBound();
+    scrollTop = offsetTop;
+    scrollAmount = viewBound.height / 4;
+    scrollBy = 10;
+    scrollFn = function() {
+        if (scrollTop > offsetTop - scrollAmount) {
+            scrollTop -= scrollBy;
+            container.scrollTop = scrollTop;
+
+            reqAnimFrame.requestAnimFrame(scrollFn);
+        } else {
+            container.scrollTop = offsetTop - scrollAmount;
+        }
+    };
+
+    reqAnimFrame.requestAnimFrame(scrollFn);
 };
 
 /**
