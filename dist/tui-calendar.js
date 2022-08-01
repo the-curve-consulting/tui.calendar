@@ -11743,6 +11743,10 @@ Calendar.prototype._onClick = function(clickScheduleData) {
     this.fire('clickSchedule', clickScheduleData);
 };
 
+Calendar.prototype._onRightClick = function(clickScheduleData) {
+    this.fire('rightClickSchedule', clickScheduleData);
+};
+
 /**
  * A bridge-based event handler for connecting a click handler to a user click event handler for each view
  * @fires Calendar#clickMore
@@ -11931,6 +11935,10 @@ Calendar.prototype._toggleViewSchedule = function(isAttach, view) {
 
     util.forEach(handler.click, function(clickHandler) {
         clickHandler[method]('clickSchedule', self._onClick, self);
+    });
+
+    util.forEach(handler.rightclick, function(clickHandler) {
+        clickHandler[method]('rightClickSchedule', self._onRightClick, self);
     });
 
     util.forEach(handler.dayname, function(clickHandler) {
@@ -12713,6 +12721,7 @@ var DayGridCreation = __webpack_require__(/*! ../handler/daygrid/creation */ "./
 var DayGridMove = __webpack_require__(/*! ../handler/daygrid/move */ "./src/js/handler/daygrid/move.js");
 var DayGridResize = __webpack_require__(/*! ../handler/daygrid/resize */ "./src/js/handler/daygrid/resize.js");
 var TimeClick = __webpack_require__(/*! ../handler/time/click */ "./src/js/handler/time/click.js");
+var TimeRightClick = __webpack_require__(/*! ../handler/time/rightclick */ "./src/js/handler/time/rightclick.js");
 var TimeCreation = __webpack_require__(/*! ../handler/time/creation */ "./src/js/handler/time/creation.js");
 var TimeMove = __webpack_require__(/*! ../handler/time/move */ "./src/js/handler/time/move.js");
 var TimeResize = __webpack_require__(/*! ../handler/time/resize */ "./src/js/handler/time/resize.js");
@@ -12727,7 +12736,8 @@ var TIMEGRID_HANDLERS = {
     'click': TimeClick,
     'creation': TimeCreation,
     'move': TimeMove,
-    'resize': TimeResize
+    'resize': TimeResize,
+    'rightclick': TimeRightClick
 };
 var DEFAULT_PANELS = [
     {
@@ -12764,7 +12774,7 @@ var DEFAULT_PANELS = [
         name: 'time',
         type: 'timegrid',
         autoHeight: true,
-        handlers: ['click', 'creation', 'move', 'resize'],
+        handlers: ['click', 'creation', 'move', 'resize', 'rightclick'],
         show: true
     }
 ];
@@ -12830,7 +12840,8 @@ module.exports = function(baseController, layoutContainer, dragHandler, options,
         dayname: {},
         creation: {},
         move: {},
-        resize: {}
+        resize: {},
+        rightclick: {}
     };
 
     dayNameContainer = domutil.appendHTMLElement('div', weekView.container, config.classname('dayname-layout'));
@@ -15040,6 +15051,12 @@ Drag.prototype._getEventData = function(mouseEvent) {
 Drag.prototype._onMouseDown = function(mouseDownEvent) {
     var opt = this.options,
         target = domevent.getEventTarget(mouseDownEvent);
+
+    if (domevent.getMouseButton(mouseDownEvent) === 2) {
+        this.fire('rightclick', this._getEventData(mouseDownEvent));
+
+        return;
+    }
 
     // only primary button can start drag.
     if (domevent.getMouseButton(mouseDownEvent) !== 0) {
@@ -19768,6 +19785,123 @@ TimeResizeGuide.prototype._onDrag = function(dragEventData) {
 module.exports = TimeResizeGuide;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
+
+/***/ }),
+
+/***/ "./src/js/handler/time/rightclick.js":
+/*!*******************************************!*\
+  !*** ./src/js/handler/time/rightclick.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Allday event click event hander module
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+var util = __webpack_require__(/*! tui-code-snippet */ "tui-code-snippet");
+var config = __webpack_require__(/*! ../../config */ "./src/js/config.js");
+var domutil = __webpack_require__(/*! ../../common/domutil */ "./src/js/common/domutil.js");
+
+/**
+ * @constructor
+ * @implements {Handler}
+ * @mixes util.CustomEvents
+ * @param {Drag} [dragHandler] - Drag handler instance.
+ * @param {TimeGrid} [timeGridView] - TimeGrid view instance.
+ * @param {Base} [baseController] - Base controller instance.
+ */
+function TimeRightClick(dragHandler, timeGridView, baseController) {
+    /**
+     * @type {Drag}
+     */
+    this.dragHandler = dragHandler;
+
+    /**
+     * @type {TimeGrid}
+     */
+    this.timeGridView = timeGridView;
+
+    /**
+     * @type {Base}
+     */
+    this.baseController = baseController;
+
+    dragHandler.on({
+        'rightclick': this._onClick
+    }, this);
+}
+
+/**
+ * Destroy method
+ */
+TimeRightClick.prototype.destroy = function() {
+    this.dragHandler.off(this);
+    this.timeGridView = this.baseController = this.dragHandler = null;
+};
+
+/**
+ * Check target element is expected condition for activate this plugins.
+ * @param {HTMLElement} target - The element to check
+ * @returns {string} - model id
+ */
+TimeRightClick.prototype.checkExpectCondition = function(target) {
+    var container,
+        matches;
+
+    container = domutil.closest(target, config.classname('.time-date'));
+
+    if (!container) {
+        return false;
+    }
+
+    matches = domutil.getClass(container).match(config.time.getViewIDRegExp);
+
+    if (!matches || matches.length < 2) {
+        return false;
+    }
+
+    return util.pick(this.timeGridView.children.items, Number(matches[1]));
+};
+
+/**
+ * Click event hander
+ * @param {object} clickEvent - click event from {@link Drag}
+ * @emits TimeClick#clickEvent
+ */
+TimeRightClick.prototype._onClick = function(clickEvent) {
+    var self = this,
+        target = clickEvent.target,
+        timeView = this.checkExpectCondition(target),
+        blockElement = domutil.closest(target, config.classname('.time-date-schedule-block')),
+        schedulesCollection = this.baseController.schedules;
+
+    if (!timeView || !blockElement) {
+        return;
+    }
+
+    schedulesCollection.doWhenHas(domutil.getData(blockElement, 'id'), function(schedule) {
+        /**
+         * @events TimeClick#clickSchedule
+         * @type {object}
+         * @property {Schedule} schedule - schedule instance
+         * @property {MouseEvent} event - MouseEvent object
+         */
+        clickEvent.originEvent.preventDefault();
+        self.fire('rightClickSchedule', {
+            schedule: schedule,
+            event: clickEvent.originEvent
+        });
+    });
+};
+
+util.CustomEvents.mixin(TimeRightClick);
+
+module.exports = TimeRightClick;
+
 
 /***/ }),
 

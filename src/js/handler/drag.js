@@ -123,6 +123,12 @@ Drag.prototype._onMouseDown = function(mouseDownEvent) {
     var opt = this.options,
         target = domevent.getEventTarget(mouseDownEvent);
 
+    if (domevent.getMouseButton(mouseDownEvent) === 2) {
+        this.fire('rightclick', this._getEventData(mouseDownEvent));
+
+        return;
+    }
+
     // only primary button can start drag.
     if (domevent.getMouseButton(mouseDownEvent) !== 0) {
         return;
