@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.15.3 | Mon Aug 01 2022
+ * @version 1.15.3 | Thu Nov 03 2022
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -8902,13 +8902,6 @@ function Base(options) {
             var model = viewModel.model;
 
             if (viewModel.model.isAllDay) {
-                return 'allday';
-            }
-
-            if (
-                model.category === 'time' &&
-                model.end - model.start > datetime.MILLISECONDS_PER_DAY
-            ) {
                 return 'allday';
             }
 
