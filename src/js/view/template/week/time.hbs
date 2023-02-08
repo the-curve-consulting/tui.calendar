@@ -8,7 +8,7 @@
                 {{#fi left '!==' 0}}
                     padding-left: {{@root.styles.paddingLeft}};
                 {{/fi}}
-            ">
+            " title="{{model.title}}">
             <div data-schedule-id="{{model.id}}" data-calendar-id="{{model.calendarId}}" class="{{CSS_PREFIX}}time-schedule {{#if model.isFocused}}{{CSS_PREFIX}}time-schedule-focused {{/if}}"
                 style="
                 {{#unless croppedEnd}}
