@@ -46,7 +46,9 @@ Unsure where to begin contributing to TOAST UI? You can start by looking through
 - Make a pull request
 
 ### Development environment
-- Prepare your machine node and it's packages installed.
+- Prepare your machine node and it's packages installed
+    - Use a node version manager tool such as [`nodenv`](https://github.com/ekalinin/nodeenv) or [`nvm`](https://github.com/nvm-sh/nvm)
+    - The project maintains a `.nvmrc` with the correct Node version to use on development. E.g: Run `nvm use` to select.
 - Checkout our repository
 - Install dependencies by `npm install`
 - Start webpack-dev-server by `npm run serve`
