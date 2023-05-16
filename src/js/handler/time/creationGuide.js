@@ -234,12 +234,12 @@ TimeCreationGuide.prototype._createGuideElement = function(dragStartEventData) {
  * @param {object} dragEventData - drag schedule data.
  */
 TimeCreationGuide.prototype._onDrag = function(dragEventData) {
-    var minutes30 = 30;
+    var minutes60 = 60;
     var styleFunc = this._styleFunc,
         unitData = this._styleUnit,
         startStyle = this._styleStart,
         refreshGuideElement = this._refreshGuideElement.bind(this),
-        heightOfHalfHour,
+        heightOfHour,
         endStyle,
         result;
 
@@ -247,22 +247,22 @@ TimeCreationGuide.prototype._onDrag = function(dragEventData) {
         return;
     }
 
-    heightOfHalfHour = (unitData[4] / 2);
+    heightOfHour = (unitData[4]);
     endStyle = styleFunc(dragEventData);
 
     if (endStyle[0] > startStyle[0]) {
         result = this._limitStyleData(
             startStyle[0],
-            (endStyle[0] - startStyle[0]) + heightOfHalfHour,
+            (endStyle[0] - startStyle[0]) + heightOfHour,
             startStyle[1],
-            new TZDate(endStyle[1]).addMinutes(minutes30)
+            new TZDate(endStyle[1]).addMinutes(minutes60)
         );
     } else {
         result = this._limitStyleData(
             endStyle[0],
-            (startStyle[0] - endStyle[0]) + heightOfHalfHour,
+            (startStyle[0] - endStyle[0]) + heightOfHour,
             endStyle[1],
-            new TZDate(startStyle[1]).addMinutes(minutes30)
+            new TZDate(startStyle[1]).addMinutes(minutes60)
         );
         result.push(true);
     }

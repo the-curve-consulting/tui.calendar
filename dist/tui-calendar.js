@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.15.3 | Wed Feb 08 2023
+ * @version 1.15.3 | Tue May 16 2023
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -18398,6 +18398,7 @@ TimeCreationGuide.prototype.clearGuideElement = function() {
  * @param {boolean} bottomLabel - is label need to render bottom of guide element?
  */
 TimeCreationGuide.prototype._refreshGuideElement = function(top, height, start, end, bottomLabel) {
+    console.log('_refreshGuideElement');
     var guideElement = this.guideElement;
     var timeElement = this.guideTimeElement;
 
@@ -18501,6 +18502,7 @@ TimeCreationGuide.prototype._getStyleDataFunc = function(viewHeight, hourLength,
  * @param {object} dragStartEventData - dragStart schedule data.
  */
 TimeCreationGuide.prototype._createGuideElement = function(dragStartEventData) {
+    console.log('_createGuideElement');
     var relatedView = dragStartEventData.relatedView,
         hourStart = datetime.millisecondsFrom('hour', dragStartEventData.hourStart) || 0,
         unitData, styleFunc, styleData, result, top, height, start, end;
@@ -18531,12 +18533,12 @@ TimeCreationGuide.prototype._createGuideElement = function(dragStartEventData) {
  * @param {object} dragEventData - drag schedule data.
  */
 TimeCreationGuide.prototype._onDrag = function(dragEventData) {
-    var minutes30 = 30;
+    var minutes60 = 60;
     var styleFunc = this._styleFunc,
         unitData = this._styleUnit,
         startStyle = this._styleStart,
         refreshGuideElement = this._refreshGuideElement.bind(this),
-        heightOfHalfHour,
+        heightOfHour,
         endStyle,
         result;
 
@@ -18544,22 +18546,22 @@ TimeCreationGuide.prototype._onDrag = function(dragEventData) {
         return;
     }
 
-    heightOfHalfHour = (unitData[4] / 2);
+    heightOfHour = (unitData[4]);
     endStyle = styleFunc(dragEventData);
 
     if (endStyle[0] > startStyle[0]) {
         result = this._limitStyleData(
             startStyle[0],
-            (endStyle[0] - startStyle[0]) + heightOfHalfHour,
+            (endStyle[0] - startStyle[0]) + heightOfHour,
             startStyle[1],
-            new TZDate(endStyle[1]).addMinutes(minutes30)
+            new TZDate(endStyle[1]).addMinutes(minutes60)
         );
     } else {
         result = this._limitStyleData(
             endStyle[0],
-            (startStyle[0] - endStyle[0]) + heightOfHalfHour,
+            (startStyle[0] - endStyle[0]) + heightOfHour,
             endStyle[1],
-            new TZDate(startStyle[1]).addMinutes(minutes30)
+            new TZDate(startStyle[1]).addMinutes(minutes60)
         );
         result.push(true);
     }
