@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.15.3 | Tue May 16 2023
+ * @version 1.15.3 | Wed May 17 2023
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -18398,7 +18398,6 @@ TimeCreationGuide.prototype.clearGuideElement = function() {
  * @param {boolean} bottomLabel - is label need to render bottom of guide element?
  */
 TimeCreationGuide.prototype._refreshGuideElement = function(top, height, start, end, bottomLabel) {
-    console.log('_refreshGuideElement');
     var guideElement = this.guideElement;
     var timeElement = this.guideTimeElement;
 
@@ -18502,7 +18501,6 @@ TimeCreationGuide.prototype._getStyleDataFunc = function(viewHeight, hourLength,
  * @param {object} dragStartEventData - dragStart schedule data.
  */
 TimeCreationGuide.prototype._createGuideElement = function(dragStartEventData) {
-    console.log('_createGuideElement');
     var relatedView = dragStartEventData.relatedView,
         hourStart = datetime.millisecondsFrom('hour', dragStartEventData.hourStart) || 0,
         unitData, styleFunc, styleData, result, top, height, start, end;
