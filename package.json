@@ -39,7 +39,7 @@
     "@formatjs/intl-locale": "^2.4.11",
     "@formatjs/intl-numberformat": "^6.1.1",
     "@formatjs/intl-pluralrules": "^4.0.1",
-    "css-loader": "^3.2.0",
+    "css-loader": "^7.1.2",
     "es6-set": "^0.1.5",
     "eslint": "^4.19.1",
     "eslint-config-tui": "^1.0.3",
@@ -51,7 +51,7 @@
     "handlebars-template-loader": "^1.0.0",
     "istanbul-instrumenter-loader": "^3.0.1",
     "jasmine-core": "^2.99.1",
-    "jsdoc": "^3.5.5",
+    "jsdoc": "^4.0.4",
     "karma": "^6.3.14",
     "karma-chrome-launcher": "^2.2.0",
     "karma-cli": "^2.0.0",
@@ -69,9 +69,9 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-spec-reporter": "0.0.32",
     "karma-webdriver-launcher": "git+https://github.com/nhn/karma-webdriver-launcher.git#v1.2.0",
-    "karma-webpack": "^4.0.2",
+    "karma-webpack": "^5.0.1",
     "mini-css-extract-plugin": "^0.4.0",
-    "optimize-css-assets-webpack-plugin": "^5.0.3",
+    "optimize-css-assets-webpack-plugin": "^6.0.1",
     "preprocess-loader": "^0.3.0",
     "prettier": "^2.1.2",
     "safe-umd-webpack-plugin": "^4.0.0",
@@ -86,7 +86,7 @@
     "weakmap-polyfill": "^2.0.2",
     "webpack": "^4.13.0",
     "webpack-cli": "^3.0.8",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^5.2.0"
   },
   "scripts": {
     "test": "karma start --no-single-run",
@@ -103,7 +103,7 @@
     "publish:cdn": "node scripts/publishToCDN.js"
   },
   "dependencies": {
-    "dompurify": "^2.3.1",
+    "dompurify": "^3.2.4",
     "tui-code-snippet": "^1.5.0",
     "tui-date-picker": "^4.3.0",
     "tui-time-picker": "^2.1.4"
